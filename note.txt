@@ -14,5 +14,32 @@
 
  계속 에러 날때는 세션을 다시 열어서 시작 할것.  
 
- claude --resume 25c0d83a-8732-431e-8496-eb3665d9321c              
-                                                
+
+bkit 업데이트
+https://github.com/popup-studio-ai/bkit-claude-code
+
+                                                                      
+지금 원격에 커밋메세지: 지금상태 + 오늘날짜 이렇게 해서 push 해줘.  -> skill
+
+ ultraplan
+ 1. 기본 로그인 페이지 구현 -> 2. ui 변경 요구 -> 3. 처음 썼던 로그인 페이지를 "덮어쓰고 처음부터 다시 구현"함
+
+ 1. https://claude.ai/code/session_01B85PJvJn3HBX3ZVpMejJqA
+ 2. https://claude.ai/code/session_01UHqtM9u3XuJ7To8RHJxYG5   :  이걸로 덮어짐.
+
+                                                 
+ claude --resume "[bkit] ultraPlanLogin"  ( 이거 헷갈릴 수도?? )
+ claude --resume e8b4b72b-dfb6-4cc6-b7d1-e747880da6b0 
+
+
+
+
+---------------------------------------------------------------------------------------------
+
+advisor 설정
+
+1.
+/model opusmodel
+
+2.
+/model opusplan

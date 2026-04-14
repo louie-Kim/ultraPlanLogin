@@ -1,136 +1,132 @@
 "use client";
 
+import { motion } from "framer-motion";
+import { signIn } from "next-auth/react";
 import { useState } from "react";
+import AnimatedBackground from "@/components/AnimatedBackground";
+import LoginForm from "@/components/LoginForm";
+import SocialButton from "@/components/SocialButton";
 
-interface FormErrors {
-  email?: string;
-  password?: string;
-}
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } },
+};
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
 
-  function validate(): FormErrors {
-    const newErrors: FormErrors = {};
-    if (!email) {
-      newErrors.email = "이메일을 입력해주세요.";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "올바른 이메일 형식이 아닙니다.";
-    }
-    if (!password) {
-      newErrors.password = "비밀번호를 입력해주세요.";
-    }
-    return newErrors;
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-    setErrors({});
-    setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log("로그인 시도:", { email, password });
-    setIsLoading(false);
+  async function handleSocialLogin(provider: "google" | "facebook") {
+    setLoadingProvider(provider);
+    await signIn(provider, { callbackUrl: "/" });
+    setLoadingProvider(null);
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">로그인</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            계속하려면 계정에 로그인하세요.
-          </p>
-        </div>
+    <>
+      <AnimatedBackground />
 
-        <form onSubmit={handleSubmit} noValidate className="space-y-5">
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              이메일
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@example.com"
-              className={`w-full px-4 py-2.5 rounded-lg border text-sm outline-none transition
-                focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                ${errors.email ? "border-red-500 bg-red-50" : "border-gray-300 bg-white"}`}
-            />
-            {errors.email && (
-              <p className="mt-1.5 text-xs text-red-600">{errors.email}</p>
-            )}
-          </div>
-
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              비밀번호
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="비밀번호를 입력하세요"
-              className={`w-full px-4 py-2.5 rounded-lg border text-sm outline-none transition
-                focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                ${errors.password ? "border-red-500 bg-red-50" : "border-gray-300 bg-white"}`}
-            />
-            {errors.password && (
-              <p className="mt-1.5 text-xs text-red-600">{errors.password}</p>
-            )}
-          </div>
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full py-2.5 px-4 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400
-              text-white text-sm font-medium rounded-lg transition flex items-center justify-center gap-2"
+      <main className="min-h-screen flex items-center justify-center px-4">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="w-full max-w-md"
+        >
+          {/* 글래스모피즘 카드 */}
+          <motion.div
+            variants={itemVariants}
+            className="
+              rounded-3xl border border-white/10
+              bg-white/5 backdrop-blur-xl
+              shadow-2xl shadow-black/40
+              p-8
+            "
           >
-            {isLoading ? (
-              <>
+            {/* 헤더 */}
+            <motion.div variants={itemVariants} className="mb-8 text-center">
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.5, ease: "backOut" }}
+                className="
+                  inline-flex items-center justify-center
+                  w-14 h-14 rounded-2xl bg-violet-600/20
+                  border border-violet-500/30 mb-4
+                "
+              >
                 <svg
-                  className="animate-spin h-4 w-4 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-7 h-7 text-violet-400"
                   fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
                   <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
                   />
                 </svg>
-                로그인 중...
-              </>
-            ) : (
-              "로그인"
-            )}
-          </button>
-        </form>
-      </div>
-    </main>
+              </motion.div>
+              <h1 className="text-2xl font-bold text-white">환영합니다</h1>
+              <p className="mt-1 text-sm text-white/50">
+                계속하려면 로그인하세요
+              </p>
+            </motion.div>
+
+            {/* 소셜 로그인 */}
+            <motion.div variants={itemVariants} className="space-y-3 mb-6">
+              <SocialButton
+                provider="google"
+                onClick={() => handleSocialLogin("google")}
+                isLoading={loadingProvider === "google"}
+              />
+              <SocialButton
+                provider="facebook"
+                onClick={() => handleSocialLogin("facebook")}
+                isLoading={loadingProvider === "facebook"}
+              />
+            </motion.div>
+
+            {/* 구분선 */}
+            <motion.div
+              variants={itemVariants}
+              className="flex items-center gap-3 mb-6"
+            >
+              <div className="flex-1 h-px bg-white/10" />
+              <span className="text-xs text-white/30 font-medium">또는</span>
+              <div className="flex-1 h-px bg-white/10" />
+            </motion.div>
+
+            {/* 이메일 폼 */}
+            <motion.div variants={containerVariants}>
+              <LoginForm />
+            </motion.div>
+
+            {/* 푸터 */}
+            <motion.p
+              variants={itemVariants}
+              className="mt-6 text-center text-xs text-white/30"
+            >
+              계정이 없으신가요?{" "}
+              <a
+                href="#"
+                className="text-violet-400 hover:text-violet-300 transition-colors"
+              >
+                회원가입
+              </a>
+            </motion.p>
+          </motion.div>
+        </motion.div>
+      </main>
+    </>
   );
 }
